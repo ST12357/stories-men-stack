@@ -71,30 +71,45 @@ require("./config/passport")(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('*', function(req, res,next){
+app.get("*", function (req, res, next) {
     res.locals.user = req.user || null;
     next();
 });
 
-app.get("/", function (req, res) {
-    Article.find({}, function (err, articles) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.render("index", {
-                title: "Articles",
-                articles: articles,
+app.get("/", async function (req, res) {
+    try {
+        let articles = [];
+        
+        if (req.query.search) {
+            let articlesByBody = await Article.find({ body: new RegExp(req.query.search, 'i')});
+            let articlesByTitle = await Article.find({ title: new RegExp(req.query.search, 'i')});
+
+            const uniqueIds = new Set();
+            articles = [...articlesByBody, ...articlesByTitle].filter((article, index, all) => {
+                const result = !uniqueIds.has(article._id.toString());
+                uniqueIds.add(article._id.toString());
+                return result;
             });
+        } else {
+            articles = await Article.find({});
         }
-    });
+        
+        res.render("index", {
+            title: "Articles",
+            articles: articles,
+        });
+    } catch (e) {
+        console.log(e);
+    }
 });
 
 let articles = require("./routes/articles");
 let users = require("./routes/users");
+const article = require("./models/article");
 app.use("/articles", articles);
 app.use("/users", users);
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, function () {
-    console.log("Server started at "+PORT);
+    console.log("Server started at " + PORT);
 });

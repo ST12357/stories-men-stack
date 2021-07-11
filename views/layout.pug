@@ -27,8 +27,8 @@ html
                         a.nav-link(href='/users/login') Login 
 
                     li.nav-item
-                form.d-flex(action='/search', method='GET')
-                    input.form-control.me-2(type='search' placeholder='Search' aria-label='Search')
+                form.d-flex(action='/', method='GET')
+                    input.form-control.me-2(name='search', type='search', placeholder='Search', aria-label='Search')
                     button.btn.btn-outline-success(type='submit') Search
 
 
@@ -41,7 +41,7 @@ html
             br
             br
             footer 
-                p Copyright &copy; 2021
+                p Copyright &copy; Tasnim Shahriar
 
         script(src='/bower_components/jquery/dist/jquery.js')
         script(src='/bower_components/bootstrap/dist/js/bootstrap.js')
